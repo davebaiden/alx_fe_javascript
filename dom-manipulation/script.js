@@ -1,3 +1,8 @@
+// ============================
+// Dynamic Quote Generator
+// ============================
+
+// Initial quotes
 let quotes = JSON.parse(localStorage.getItem("quotes")) || [
   { text: "The best way to predict the future is to invent it.", author: "Alan Kay", category: "Inspiration" },
   { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "Life" },
@@ -26,14 +31,15 @@ function addQuote() {
   const category = document.getElementById("categoryInput").value.trim();
 
   if (text && author && category) {
-    const newQuote = { text, author, category };
-    quotes.push(newQuote);
+    const newQuoteObj = { text, author, category };
+    quotes.push(newQuoteObj);
     localStorage.setItem("quotes", JSON.stringify(quotes));
     populateCategories();
     filterQuotes();
     document.getElementById("quoteInput").value = "";
     document.getElementById("authorInput").value = "";
     document.getElementById("categoryInput").value = "";
+    alert("Quote added successfully!");
   } else {
     alert("Please fill all fields before adding a quote.");
   }
@@ -68,7 +74,6 @@ function exportToJsonFile() {
   const dataStr = JSON.stringify(quotes, null, 2);
   const blob = new Blob([dataStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-
   const a = document.createElement("a");
   a.href = url;
   a.download = "quotes.json";
@@ -100,39 +105,63 @@ function importFromJsonFile(event) {
   reader.readAsText(file);
 }
 
-// ---------------- SERVER SYNC (SIMULATION) ----------------
-async function syncWithServer() {
-  const statusBox = document.getElementById("syncStatus");
-  statusBox.innerText = "Syncing with server...";
-
+// ---------------- SERVER INTERACTIONS ----------------
+async function fetchQuotesFromServer() {
   try {
-    // Simulate fetching from server
     const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-    const serverData = await response.json();
-
-    // Convert serverData to quotes format (simulate categories too)
-    const serverQuotes = serverData.slice(0, 5).map((item, index) => ({
+    const data = await response.json();
+    return data.slice(0, 5).map((item, index) => ({
       text: item.title,
       author: `Server Author ${index + 1}`,
       category: index % 2 === 0 ? "Server" : "General"
     }));
-
-    // Conflict resolution: Server takes precedence
-    const serverTexts = new Set(serverQuotes.map(q => q.text));
-    quotes = [
-      ...serverQuotes,
-      ...quotes.filter(q => !serverTexts.has(q.text))
-    ];
-
-    localStorage.setItem("quotes", JSON.stringify(quotes));
-    populateCategories();
-    filterQuotes();
-
-    statusBox.innerText = "Sync completed successfully!";
   } catch (error) {
-    statusBox.innerText = "Error syncing with server.";
-    console.error(error);
+    console.error("Error fetching from server:", error);
+    return [];
   }
+}
+
+async function postQuotesToServer(localQuotes) {
+  try {
+    // Simulation: POST request to server (no real effect)
+    await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      body: JSON.stringify(localQuotes),
+      headers: { "Content-type": "application/json; charset=UTF-8" }
+    });
+    console.log("Local quotes posted to server (simulated).");
+  } catch (error) {
+    console.error("Error posting to server:", error);
+  }
+}
+
+// ---------------- SYNC QUOTES ----------------
+async function syncQuotes() {
+  const statusBox = document.getElementById("syncStatus");
+  statusBox.innerText = "Syncing with server...";
+
+  const serverQuotes = await fetchQuotesFromServer();
+  let newQuoteCount = 0;
+  let conflictCount = 0;
+
+  // Conflict resolution: server takes precedence, but count conflicts
+  const serverTexts = new Set(serverQuotes.map(q => q.text));
+  const localOnlyQuotes = quotes.filter(q => !serverTexts.has(q.text));
+  conflictCount = quotes.length - localOnlyQuotes.length;
+
+  quotes = [...serverQuotes, ...localOnlyQuotes];
+  newQuoteCount = serverQuotes.length;
+
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+  populateCategories();
+  filterQuotes();
+
+  await postQuotesToServer(quotes);
+
+  // UI notification
+  let message = `Sync complete. ${newQuoteCount} new quotes fetched.`;
+  if (conflictCount > 0) message += ` ${conflictCount} conflicts resolved.`;
+  statusBox.innerText = message;
 }
 
 // ---------------- INIT ----------------
@@ -148,5 +177,8 @@ window.onload = () => {
   }
 
   // Periodic sync every 60 seconds
-  setInterval(syncWithServer, 60000);
+  setInterval(syncQuotes, 60000);
 };
+
+// ---------------- EVENT LISTENERS ----------------
+document.getElementById("categoryFilter").addEventListener("change", filterQuotes);
