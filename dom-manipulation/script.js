@@ -126,9 +126,7 @@ async function postQuotesToServer(localQuotes) {
     await fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "POST",
       body: JSON.stringify(localQuotes),
-      headers: {
-        "Content-Type": "application/json; charset=UTF-8"
-      }
+      headers: { "Content-Type": "application/json; charset=UTF-8" }
     });
     console.log("Local quotes posted to server (simulated).");
   } catch (error) {
@@ -158,7 +156,8 @@ async function syncQuotes() {
 
   await postQuotesToServer(quotes);
 
-  let message = `Sync complete. ${newQuoteCount} new quotes fetched.`;
+  // ---------------- UI NOTIFICATION ----------------
+  let message = `Quotes synced with server! ${newQuoteCount} new quotes fetched.`;
   if (conflictCount > 0) message += ` ${conflictCount} conflicts resolved.`;
   statusBox.innerText = message;
 }
@@ -175,6 +174,7 @@ window.onload = () => {
       `<p>"${quote.text}"</p><p>- ${quote.author} (${quote.category})</p>`;
   }
 
+  // Periodic sync every 60 seconds
   setInterval(syncQuotes, 60000);
 };
 
