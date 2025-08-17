@@ -42,12 +42,6 @@ function populateCategories() {
 
 // ---------------- DISPLAY RANDOM QUOTE ----------------
 function showRandomQuote() {
-  const selectedCategory = categorySelect.value;
-
-  filteredQuotes = selectedCategory === "all"
-    ? quotes
-    : quotes.filter(q => q.category === selectedCategory);
-
   if (filteredQuotes.length === 0) {
     quoteDisplay.textContent = "No quotes available for this category.";
     return;
@@ -58,6 +52,18 @@ function showRandomQuote() {
   quoteDisplay.textContent = `"${quote.text}" - (${quote.category})`;
 
   sessionStorage.setItem("lastViewedQuote", JSON.stringify(quote));
+}
+
+// ---------------- FILTER QUOTES ----------------
+function filterQuote() {
+  const selectedCategory = categorySelect.value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+
+  filteredQuotes = selectedCategory === "all"
+    ? [...quotes]
+    : quotes.filter(q => q.category === selectedCategory);
+
+  showRandomQuote();
 }
 
 // ---------------- ADD QUOTE ----------------
@@ -74,7 +80,7 @@ function addQuote() {
   saveQuotes();
 
   populateCategories();
-  showRandomQuote();
+  filterQuote();
 
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
@@ -143,7 +149,7 @@ function importFromJsonFile(event) {
         quotes = [...quotes, ...importedQuotes];
         saveQuotes();
         populateCategories();
-        showRandomQuote();
+        filterQuote();
         alert("Quotes imported successfully!");
       } else {
         alert("Invalid file format.");
@@ -197,7 +203,7 @@ async function syncQuotes() {
   saveQuotes();
 
   populateCategories();
-  showRandomQuote();
+  filterQuote();
 
   await postQuotesToServer(quotes);
 
@@ -210,7 +216,7 @@ async function syncQuotes() {
 
 // ---------------- EVENT LISTENERS ----------------
 newQuoteBtn.addEventListener("click", showRandomQuote);
-categorySelect.addEventListener("change", showRandomQuote);
+categorySelect.addEventListener("change", filterQuote);
 
 // ---------------- INITIALIZATION ----------------
 window.onload = () => {
