@@ -2,7 +2,7 @@
 // Dynamic Quote Generator
 // ============================
 
-// Initial quotes
+// ---------------- INITIAL QUOTES ----------------
 let quotes = JSON.parse(localStorage.getItem("quotes")) || [
   { text: "The best way to predict the future is to invent it.", author: "Alan Kay", category: "Inspiration" },
   { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "Life" },
