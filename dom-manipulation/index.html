@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dynamic Quote Generator</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
     <h1>Dynamic Quote Generator</h1>
-
-    <!-- Display Random Quote -->
+    
     <div id="quoteDisplay" class="quote-box"></div>
-    <button onclick="generateQuote()">Generate Quote</button>
+    <button onclick="newQuote()">New Quote</button>
 
-    <!-- Add New Quote -->
     <h2>Add a New Quote</h2>
-    <input type="text" id="newQuote" placeholder="Enter a quote">
-    <input type="text" id="newCategory" placeholder="Enter category">
+    <input type="text" id="quoteInput" placeholder="Enter a new quote" />
+    <input type="text" id="authorInput" placeholder="Enter author" />
+    <input type="text" id="categoryInput" placeholder="Enter category" />
     <button onclick="addQuote()">Add Quote</button>
 
-    <!-- Category Filter -->
     <h2>Filter by Category</h2>
     <select id="categoryFilter" onchange="filterQuotes()">
       <option value="all">All Categories</option>
-      <!-- Populated dynamically -->
     </select>
 
-    <!-- Import / Export JSON -->
     <h2>Import / Export Quotes</h2>
     <button onclick="exportToJsonFile()">Export Quotes</button>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    <input type="file" id="importFile" onchange="importFromJsonFile(event)" />
+
+    <h2>Server Sync</h2>
+    <button onclick="syncWithServer()">Sync Now</button>
+    <div id="syncStatus" class="status-box"></div>
   </div>
 
   <script src="script.js"></script>
