@@ -4,25 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Quote Generator</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Display Random Quote -->
-  <div id="quoteDisplay" style="margin: 20px 0; font-size: 18px; font-style: italic;"></div>
-  <button id="newQuote">Show New Quote</button>
+  <!-- Quote Display -->
+  <div id="quoteDisplay">Click the button to see a quote!</div>
+  <button id="newQuoteBtn">Show New Quote</button>
 
-  <!-- Form to Add Quotes -->
-  <div style="margin-top: 20px;">
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button id="addQuoteBtn">Add Quote</button>
-  </div>
+  <!-- Category Filter -->
+  <label for="categoryFilter">Filter by category:</label>
+  <select id="categoryFilter"></select>
 
-  <!-- Dropdown for categories -->
-  <div style="margin-top: 20px;">
-    <label for="categorySelect">Choose Category: </label>
-    <select id="categorySelect"></select>
+  <!-- Add Quote Form (placeholder, injected by JS if needed) -->
+  <div id="addQuoteFormContainer"></div>
+
+  <!-- Import/Export Section -->
+  <div class="import-export">
+    <h3>Import / Export Quotes</h3>
+    
+    <!-- ✅ Export Button -->
+    <button id="exportBtn" onclick="exportToJsonFile()">Export Quotes</button>
+    
+    <!-- ✅ Import File Input -->
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)">
   </div>
 
   <script src="script.js"></script>
