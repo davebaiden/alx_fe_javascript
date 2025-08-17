@@ -1,0 +1,18 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 30px;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+}
+
+.quote-box {
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 1.2em;
+}
